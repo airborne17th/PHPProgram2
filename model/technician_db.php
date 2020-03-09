@@ -50,17 +50,30 @@ class TechnicianDB {
         $statement->closeCursor();
     }
 
-    public static function getTechniciansName($tech) {
+    public static function getTechniciansFirstName($tech) {
         $db = Database::getDB();
-
-        $query = 'SELECT firstName, lastName FROM technicians
+        $query = 'SELECT firstName FROM technicians
                   WHERE techID = :technician_id';
         $statement = $db->prepare($query);
         $statement->bindValue(':technician_id', $tech);
         $statement->execute();
+        $techfirst_name = $statement->fetch();
         $statement->closeCursor();
     
-        return $tech_name;
+        return $techfirst_name;
+    }
+
+    public static function getTechniciansLastName($tech) {
+        $db = Database::getDB();
+        $query = 'SELECT lastName FROM technicians
+                  WHERE techID = :technician_id';
+        $statement = $db->prepare($query);
+        $statement->bindValue(':technician_id', $tech);
+        $statement->execute();
+        $techlast_name = $statement->fetch();
+        $statement->closeCursor();
+    
+        return $techlast_name;
     }
 }
 ?>

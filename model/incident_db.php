@@ -50,15 +50,32 @@ class IncidentDB {
         $statement->closeCursor();
     }
     
-    public static function getCustomerName($incident) {
+    public static function getCustomerFirstName($incident) {
         $db = Database::getDB();
 
-        $query = 'SELECT firstName, lastName FROM incidents JOIN customers
+        $query = 'SELECT firstName FROM incidents JOIN customers
                   WHERE incidentID = :incident_id';
         $statement = $db->prepare($query);
         $statement->bindValue(':incident_id', $incident);
         $statement->execute();
+        $custfirst_name = $statement->fetch();
         $statement->closeCursor();
+
+        return $custfirst_name;
+    }
+
+    public static function getCustomerLastName($incident) {
+        $db = Database::getDB();
+
+        $query = 'SELECT lastName FROM incidents JOIN customers
+                  WHERE incidentID = :incident_id';
+        $statement = $db->prepare($query);
+        $statement->bindValue(':incident_id', $incident);
+        $statement->execute();
+        $custlast_name = $statement->fetch();
+        $statement->closeCursor();
+
+        return $custlast_name;
     }
 
     public static function getProductCode($incident) {
@@ -69,7 +86,7 @@ class IncidentDB {
         $statement = $db->prepare($query);
         $statement->bindValue(':incident_id', $incident);
         $statement->execute();
-        $product_name = $statement->fetchAll();
+        $product_name = $statement->fetch();
         $statement->closeCursor();
 
         return $product_name;

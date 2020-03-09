@@ -44,24 +44,40 @@ switch ($action) {
     case 'incident_assign':
         // Store tech ID for later
         $_SESSION["tech"] = filter_input(INPUT_POST, 'technician_id', FILTER_VALIDATE_INT);
+        
         $tech = $_SESSION["tech"];
         $incident = $_SESSION["incident"];
-        $tech_name = TechnicianDB::getTechniciansName($tech);
-        $cust_name = IncidentDB::getCustomerName($incident);
+
+        // Get the data to display on the assign page.
+        $techfirst_name = TechnicianDB::getTechniciansFirstName($tech);
+        $techlast_name = TechnicianDB::getTechniciansLastName($tech);
+        $custfirst_name = IncidentDB::getCustomerFirstName($incident);
+        $custlast_name = IncidentDB::getCustomerLastName($incident);
         $product_name = IncidentDB::getProductCode($incident);
+
         include('incident_assign.php');
         break;
     case 'final_incident':
         $isValid = true;
-        function checkTech($isValid) {
-            if(is_nan($tech)) {
-              throw new Exception("Techician value must be a number");
+        $tech = $_SESSION["tech"];
+        $incident = $_SESSION["incident"];
+        function checkTech($tech) {
+            if($tech === NULL) {
+              throw new Exception("Technician value must be a number");
               return false;
             }
           }
-          
-          function checkIncident($isValid) {
-            if(is_nan($incident)) {
+        
+        try {
+            checkTech($tech);
+          }
+
+        //catch exception
+        catch(Exception $error) {
+          }
+        
+          function checkIncident($incident) {
+            if($incident === NULL) {
               throw new Exception("Incident must be a number");
               return false;
             }
@@ -69,19 +85,20 @@ switch ($action) {
 
           try {
             checkTech($tech);
-            checkIncident($incident);
           }
 
-          //catch exception
-          catch(Exception $error) {
+        //catch exception
+        catch(Exception $error) {
           }
+
         if($isValid == true) {
             IncidentDB::assignTechnican($tech, $incident);
             include('incident_success.php');
         } else {
             include('error.php');        
         }
-        
     break;
 }
 ?>
+
+checkIncident($incident);
